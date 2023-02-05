@@ -55,7 +55,7 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
+      <main className="dark">
         <div className="flex">
           <div className="mr-2 mt-2 flex-1 flex-col text-end">
             <p>{highScore}</p>
