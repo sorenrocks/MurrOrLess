@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react"
+import CountUp from "react-countup"
+
 type Props = {
   character: Character
   check?: (guess: number) => void
@@ -23,6 +26,15 @@ const format = (n: number) => {
 }
 
 const CharacterCard = ({ character: c, check }: Props) => {
+  const [active, setActive] = useState<boolean>()
+
+  useEffect(() => {
+    setActive(!!check)
+  }, [c, check])
+
+  const ease = 1000
+  const delay = 500
+
   return (
     <div className="h-screen flex-1 flex-col justify-center pt-52 pb-40 text-center">
       <h1 className="mt-32 text-4xl font-semibold">
@@ -36,20 +48,37 @@ const CharacterCard = ({ character: c, check }: Props) => {
       <p className="mt-5 mb-1 text-lg text-gray-300">has</p>
 
       {check ? (
-        <div className="flex flex-col items-center">
-          <button
-            className="w-56 bg-orange-600 py-1 text-2xl font-semibold"
-            onClick={() => check(1)}
-          >
-            more
-          </button>
-          <button
-            className="mt-2 w-56 bg-blue-600 py-1 text-2xl font-semibold"
-            onClick={() => check(-1)}
-          >
-            less
-          </button>
-        </div>
+        <>
+          {active ? (
+            <div className="flex flex-col items-center">
+              <button
+                className="w-56 bg-orange-600 py-1 text-2xl font-semibold"
+                onClick={() => {
+                  setActive(false)
+                  setTimeout(() => check(1), ease + delay)
+                }}
+              >
+                more
+              </button>
+              <button
+                className="mt-2 w-56 bg-blue-600 py-1 text-2xl font-semibold"
+                onClick={() => {
+                  setActive(false)
+                  setTimeout(() => check(-1), ease + delay)
+                }}
+              >
+                less
+              </button>
+            </div>
+          ) : (
+            <CountUp
+              className="text-6xl font-bold"
+              end={c.fav_count}
+              formattingFn={format}
+              duration={ease / 1000}
+            />
+          )}
+        </>
       ) : (
         <p className="text-6xl font-bold">{format(c.fav_count)}</p>
       )}
