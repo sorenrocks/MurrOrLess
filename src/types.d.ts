@@ -1,5 +1,5 @@
 type Character = {
   character: string
-  char_posts: number
+  fav_count: number
   copyright: string
 }
