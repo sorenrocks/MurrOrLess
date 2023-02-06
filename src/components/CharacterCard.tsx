@@ -18,12 +18,16 @@ const beautify = (s: string, noExtra = false) => {
   return ret
 }
 
+const format = (n: number) => {
+  return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
+
 const CharacterCard = ({ character: c, check }: Props) => {
   return (
     <div className="mt-64 flex-1 flex-col justify-center pb-40 text-center">
       <h1 className="text-4xl font-semibold">{beautify(c.character, true)}</h1>
       <h2 className="text-xl">
-        <span className="text-gray-400">from</span> {beautify(c.copyright)}
+        <span className="text-gray-400"> from</span> {beautify(c.copyright)}
       </h2>
 
       <p className="mt-5 mb-1 text-lg text-gray-400">has</p>
@@ -44,7 +48,7 @@ const CharacterCard = ({ character: c, check }: Props) => {
           </button>
         </div>
       ) : (
-        <p className="text-6xl font-bold">{c.fav_count}</p>
+        <p className="text-6xl font-bold">{format(c.fav_count)}</p>
       )}
 
       <p className="mt-1 text-gray-400">favorites on e621</p>
