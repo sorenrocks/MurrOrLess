@@ -34,7 +34,7 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
   const check = (guess: number) => {
     if (!a || !b) return null
 
-    const actual = b.char_posts - a.char_posts
+    const actual = b.fav_count - a.fav_count
     if ((actual > 0 && guess > 0) || (actual < 0 && guess < 0)) {
       setIdx(idx + 1)
     } else {
@@ -55,7 +55,7 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="dark">
+      <main className="h-screen bg-gray-900 text-white">
         <div className="flex">
           <div className="mr-2 mt-2 flex-1 flex-col text-end">
             <p>{highScore}</p>
