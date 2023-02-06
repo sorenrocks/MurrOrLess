@@ -24,13 +24,16 @@ const format = (n: number) => {
 
 const CharacterCard = ({ character: c, check }: Props) => {
   return (
-    <div className="mt-64 flex-1 flex-col justify-center pb-40 text-center">
-      <h1 className="text-4xl font-semibold">{beautify(c.character, true)}</h1>
-      <h2 className="text-xl">
-        <span className="text-gray-400"> from</span> {beautify(c.copyright)}
+    <div className="h-screen flex-1 flex-col justify-center pt-52 pb-40 text-center">
+      <h1 className="mt-32 text-4xl font-semibold">
+        {beautify(c.character, true)}
+      </h1>
+      <h2 className="text-xl font-semibold">
+        <span className="font-normal text-gray-300"> from</span>{" "}
+        {beautify(c.copyright)}
       </h2>
 
-      <p className="mt-5 mb-1 text-lg text-gray-400">has</p>
+      <p className="mt-5 mb-1 text-lg text-gray-300">has</p>
 
       {check ? (
         <div className="flex flex-col items-center">
@@ -51,7 +54,7 @@ const CharacterCard = ({ character: c, check }: Props) => {
         <p className="text-6xl font-bold">{format(c.fav_count)}</p>
       )}
 
-      <p className="mt-1 text-gray-400">favorites on e621</p>
+      <p className="mt-1 text-gray-300">favorites on e621</p>
     </div>
   )
 }

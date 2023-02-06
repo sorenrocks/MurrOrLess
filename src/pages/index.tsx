@@ -55,15 +55,15 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="h-screen bg-gray-900 text-white">
-        <div className="flex">
+      <main className="h-screen bg-gray-900 text-lg font-semibold text-white">
+        <div className="absolute flex w-screen">
           <div className="mr-2 mt-2 flex-1 flex-col text-end">
             <p>{highScore}</p>
-            <p>highscore</p>
+            <p className="-mt-1">highscore</p>
           </div>
           <div className="ml-2 mt-2 flex-1 justify-start">
             <p>{idx}</p>
-            <p>score</p>
+            <p className="-mt-1">score</p>
           </div>
         </div>
         <div className="flex">
