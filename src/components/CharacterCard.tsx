@@ -37,7 +37,14 @@ const CharacterCard = ({ character: c, check }: Props) => {
   const delay = 500
 
   return (
-    <div className="h-screen flex-1 flex-col justify-center pt-52 pb-40 text-center">
+    <div
+      className="h-screen flex-1 flex-col justify-center pt-52 pb-40 text-center"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${c.thumb})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
       <h1 className="mt-32 text-4xl font-semibold">
         {beautify(c.character, true)}
       </h1>
