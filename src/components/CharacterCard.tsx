@@ -30,7 +30,8 @@ const CharacterCard = ({ character: c, check }: Props) => {
 
   useEffect(() => {
     setActive(!!check)
-  }, [c, check])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [c])
 
   const ease = 1000
   const delay = 500
@@ -52,7 +53,7 @@ const CharacterCard = ({ character: c, check }: Props) => {
           {active ? (
             <div className="flex flex-col items-center">
               <button
-                className="w-56 bg-orange-600 py-1 text-2xl font-semibold"
+                className="w-56 rounded-sm bg-orange-600 py-1 text-2xl font-semibold"
                 onClick={() => {
                   setActive(false)
                   setTimeout(() => check(1), ease + delay)
@@ -61,7 +62,7 @@ const CharacterCard = ({ character: c, check }: Props) => {
                 more
               </button>
               <button
-                className="mt-2 w-56 bg-blue-600 py-1 text-2xl font-semibold"
+                className="mt-2 w-56 rounded-sm bg-blue-600 py-1 text-2xl font-semibold"
                 onClick={() => {
                   setActive(false)
                   setTimeout(() => check(-1), ease + delay)

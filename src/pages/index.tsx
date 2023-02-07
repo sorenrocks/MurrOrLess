@@ -19,7 +19,9 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
 
   const [highScore, setHighScore] = useState<number>(0)
 
-  const [attempt, setAttempt] = useState<number>(0)
+  const [attempt, setAttempt] = useState<number>(1)
+
+  const [gameOver, setGameOver] = useState<boolean>(false)
 
   useEffect(() => {
     setChars(shuffle(_chars))
@@ -29,7 +31,7 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
   useEffect(() => {
     setA(chars[idx])
     setB(chars[idx + 1])
-  }, [idx, chars])
+  }, [idx, chars, attempt])
 
   const check = (guess: number) => {
     if (!a || !b) return null
@@ -38,10 +40,15 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
     if ((actual > 0 && guess > 0) || (actual < 0 && guess < 0)) {
       setIdx(idx + 1)
     } else {
-      if (highScore < idx) setHighScore(idx)
-      setIdx(0)
-      setAttempt(attempt + 1)
+      setGameOver(true)
     }
+  }
+
+  const reset = () => {
+    if (highScore < idx) setHighScore(idx)
+    setIdx(0)
+    setGameOver(false)
+    setAttempt(attempt + 1)
   }
 
   if (!a || !b) return null
@@ -66,6 +73,14 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
             <p className="-mt-1">score</p>
           </div>
         </div>
+        {gameOver && (
+          <button
+            className="absolute left-0 right-0 top-0 bottom-0 m-auto h-fit w-56 rounded-sm bg-purple-800 pt-1 pb-2 text-xl font-semibold"
+            onClick={() => reset()}
+          >
+            try again
+          </button>
+        )}
         <div className="flex">
           <CharacterCard character={a} />
           <CharacterCard character={b} check={check} />
