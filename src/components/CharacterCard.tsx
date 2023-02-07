@@ -15,7 +15,7 @@ const beautify = (s: string, noExtra = false) => {
   // capitalize
   ret = ret.replace(
     /\w\S*/g,
-    (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase(),
+    (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase(),
   )
 
   return ret

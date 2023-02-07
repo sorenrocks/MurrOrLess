@@ -49,7 +49,7 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
 
   const reset = () => {
     if (highScore < idx) setHighScore(idx)
-    Cookies.set("highscore", idx.toString())
+    Cookies.set("highscore", idx.toString(), { expires: 365 })
     setIdx(0)
     setGameOver(false)
     setAttempt(attempt + 1)
