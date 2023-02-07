@@ -5,6 +5,7 @@ import Head from "next/head"
 import { readFileSync } from "fs"
 import CharacterCard from "../components/CharacterCard"
 import { useState, useEffect } from "react"
+import Cookies from "js-cookie"
 
 type Props = {
   characters: Character[]
@@ -17,7 +18,9 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
   const [a, setA] = useState<Character>()
   const [b, setB] = useState<Character>()
 
-  const [highScore, setHighScore] = useState<number>(0)
+  const [highScore, setHighScore] = useState<number>(
+    parseInt(Cookies.get("highscore") || "0"),
+  )
 
   const [attempt, setAttempt] = useState<number>(1)
 
@@ -46,6 +49,7 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
 
   const reset = () => {
     if (highScore < idx) setHighScore(idx)
+    Cookies.set("highscore", idx.toString())
     setIdx(0)
     setGameOver(false)
     setAttempt(attempt + 1)
@@ -64,12 +68,12 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
       </Head>
       <main className="h-screen bg-gray-900 text-lg font-semibold text-white">
         <div className="absolute flex w-screen">
-          <div className="mr-2 mt-2 flex-1 flex-col text-end">
-            <p>{highScore}</p>
+          <div className="mr-3 mt-2 flex-1 flex-col text-end">
+            <p className="text-3xl">{highScore}</p>
             <p className="-mt-1">highscore</p>
           </div>
-          <div className="ml-2 mt-2 flex-1 justify-start">
-            <p>{idx}</p>
+          <div className="ml-3 mt-2 flex-1 justify-start">
+            <p className="text-3xl">{idx}</p>
             <p className="-mt-1">score</p>
           </div>
         </div>
