@@ -19,6 +19,7 @@ const Home: NextPage<Props> = ({ characters: _chars, updatedAt }) => {
   const [idx, setIdx] = useState<number>(0)
   const [a, setA] = useState<Character>()
   const [b, setB] = useState<Character>()
+  const [tmp, setTmp] = useState<Character>()
 
   const [highScore, setHighScore] = useState<number>(
     parseInt(Cookies.get("highscore") || "0"),
@@ -36,11 +37,17 @@ const Home: NextPage<Props> = ({ characters: _chars, updatedAt }) => {
   useEffect(() => {
     setA(chars[idx])
     setB(chars[idx + 1])
+    setTmp(chars[idx + 2])
 
     if (highScore < idx)
       Cookies.set("highscore", idx.toString(), { expires: 365 })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, chars, attempt])
+
+  // prefetch next image
+  useEffect(() => {
+    if (tmp) new Image().src = tmp.url
+  }, [tmp])
 
   const check = (guess: number) => {
     if (!a || !b) return null
