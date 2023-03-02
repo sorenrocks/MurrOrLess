@@ -6,17 +6,20 @@ import { readFileSync } from "fs"
 import CharacterCard from "../components/CharacterCard"
 import { useState, useEffect } from "react"
 import Cookies from "js-cookie"
+import timeAgo from "../utils/timeAgo"
 
 type Props = {
   characters: Character[]
+  updatedAt: string
 }
 
-const Home: NextPage<Props> = ({ characters: _chars }) => {
+const Home: NextPage<Props> = ({ characters: _chars, updatedAt }) => {
   const [chars, setChars] = useState<Character[]>([])
 
   const [idx, setIdx] = useState<number>(0)
   const [a, setA] = useState<Character>()
   const [b, setB] = useState<Character>()
+  const [tmp, setTmp] = useState<Character>()
 
   const [highScore, setHighScore] = useState<number>(
     parseInt(Cookies.get("highscore") || "0"),
@@ -34,7 +37,17 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
   useEffect(() => {
     setA(chars[idx])
     setB(chars[idx + 1])
+    setTmp(chars[idx + 2])
+
+    if (highScore < idx)
+      Cookies.set("highscore", idx.toString(), { expires: 365 })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, chars, attempt])
+
+  // prefetch next image
+  useEffect(() => {
+    if (tmp) new Image().src = tmp.url
+  }, [tmp])
 
   const check = (guess: number) => {
     if (!a || !b) return null
@@ -49,7 +62,6 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
 
   const reset = () => {
     if (highScore < idx) setHighScore(idx)
-    Cookies.set("highscore", idx.toString(), { expires: 365 })
     setIdx(0)
     setGameOver(false)
     setAttempt(attempt + 1)
@@ -59,7 +71,7 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
   return (
     <>
       <Head>
-        <title>MurrOrLess</title>
+        <title>MurrOrLess?</title>
         <meta
           name="description"
           content="Guess which character is more popular on e621"
@@ -86,10 +98,39 @@ const Home: NextPage<Props> = ({ characters: _chars }) => {
           </button>
         )}
         <div className="flex">
-          <CharacterCard character={a} />
-          <CharacterCard character={b} check={check} />
+          <CharacterCard character={a} btnPos={"left"} />
+          <CharacterCard character={b} check={check} btnPos={"right"} />
         </div>
       </main>
+      <footer className="absolute bottom-0 left-0 right-0 mx-auto mb-1 w-fit text-center text-sm text-white">
+        <p>
+          <a
+            className="font-bold text-orange-600"
+            href="https://github.com/sorenrocks/MurrOrLess"
+            target="_blank"
+            rel="noreferrer"
+          >
+            MurrOrLess
+          </a>{" "}
+          by{" "}
+          <a
+            className="font-bold text-blue-600"
+            href="https://github.com/sorenrocks"
+            target="_blank"
+            rel="noreferrer"
+          >
+            soren.rocks
+          </a>{" "}
+          | serving <span className="font-bold">{chars.length}</span> characters
+          | updated{" "}
+          <span
+            title={new Date(updatedAt).toDateString()}
+            className="font-bold hover:cursor-help"
+          >
+            {timeAgo(new Date(updatedAt))}
+          </span>
+        </p>
+      </footer>
     </>
   )
 }
@@ -112,8 +153,11 @@ function shuffle<T>(array: T[]): T[] {
 
 export const getStaticProps: GetStaticProps = async () => {
   return new Promise((resolve, reject) => {
-    const filepath = "./data/characters.csv"
-    const contents = readFileSync(filepath, "utf8")
+    const updatedAtPath = "./data/updated_at.txt"
+    const updatedAt = readFileSync(updatedAtPath, "utf8").trim()
+
+    const charsPath = "./data/characters.csv"
+    const contents = readFileSync(charsPath, "utf8")
 
     parse(contents, { columns: true }, (err, records) => {
       if (err) reject(err)
@@ -121,6 +165,7 @@ export const getStaticProps: GetStaticProps = async () => {
       resolve({
         props: {
           characters: records as Character[],
+          updatedAt,
         },
       })
     })

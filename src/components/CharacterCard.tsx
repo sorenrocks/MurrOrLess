@@ -1,31 +1,18 @@
 import { useEffect, useState } from "react"
 import CountUp from "react-countup"
+import beautify from "../utils/beautify"
 
 type Props = {
   character: Character
   check?: (guess: number) => void
-}
-
-const beautify = (s: string, noExtra = false) => {
-  let ret = s.replace(/_/g, " ")
-
-  // remove (...)
-  if (noExtra) ret = ret.replace(/\(.*\)/g, "")
-
-  // capitalize
-  ret = ret.replace(
-    /\w\S*/g,
-    (txt) => txt.charAt(0).toUpperCase() + txt.substring(1).toLowerCase(),
-  )
-
-  return ret
+  btnPos: "left" | "right"
 }
 
 const format = (n: number) => {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
-const CharacterCard = ({ character: c, check }: Props) => {
+const CharacterCard = ({ character: c, check, btnPos }: Props) => {
   const [active, setActive] = useState<boolean>()
 
   useEffect(() => {
@@ -33,14 +20,14 @@ const CharacterCard = ({ character: c, check }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [c])
 
-  const ease = 1000
+  const ease = 800
   const delay = 500
 
   return (
     <div
       className="h-screen flex-1 flex-col justify-center pt-52 pb-40 text-center"
       style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${c.thumb})`,
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url(${c.url})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -92,6 +79,21 @@ const CharacterCard = ({ character: c, check }: Props) => {
       )}
 
       <p className="mt-1 text-gray-300">favorites on e621</p>
+
+      <div
+        className={`absolute bottom-3 flex ${
+          btnPos === "right" ? "right-3" : "left-3"
+        }`}
+      >
+        <a
+          href={`https://e926.net/posts/${c.id}`}
+          target="_blank"
+          rel="noreferrer"
+          className="rounded bg-gray-800 px-2 py-1 text-sm"
+        >
+          view post
+        </a>
+      </div>
     </div>
   )
 }
