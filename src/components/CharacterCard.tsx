@@ -81,7 +81,7 @@ const CharacterCard = ({ character: c, check, btnPos }: Props) => {
       <p className="mt-1 text-gray-300">favorites on e621</p>
 
       <div
-        className={`absolute bottom-1 flex ${
+        className={`absolute bottom-3 flex ${
           btnPos === "right" ? "right-3" : "left-3"
         }`}
       >
@@ -89,10 +89,9 @@ const CharacterCard = ({ character: c, check, btnPos }: Props) => {
           href={`https://e926.net/posts/${c.id}`}
           target="_blank"
           rel="noreferrer"
+          className="rounded bg-gray-800 px-2 py-1 text-sm"
         >
-          <button className="rounded bg-gray-800 px-1 text-sm">
-            view post
-          </button>
+          view post
         </a>
       </div>
     </div>

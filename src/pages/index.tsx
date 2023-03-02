@@ -102,7 +102,7 @@ const Home: NextPage<Props> = ({ characters: _chars, updatedAt }) => {
           <CharacterCard character={b} check={check} btnPos={"right"} />
         </div>
       </main>
-      <footer className="absolute bottom-0 mb-1 w-screen text-center text-sm">
+      <footer className="absolute bottom-0 left-0 right-0 mx-auto mb-1 w-fit text-center text-sm text-white">
         <p>
           <a
             className="font-bold text-orange-600"
