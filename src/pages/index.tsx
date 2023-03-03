@@ -29,6 +29,8 @@ const Home: NextPage<Props> = ({ characters: _chars, updatedAt }) => {
 
   const [gameOver, setGameOver] = useState<boolean>(false)
 
+  const updatedDate = new Date(updatedAt)
+
   useEffect(() => {
     setChars(shuffle(_chars))
     setIdx(0)
@@ -124,10 +126,14 @@ const Home: NextPage<Props> = ({ characters: _chars, updatedAt }) => {
           | serving <span className="font-bold">{chars.length}</span> characters
           | updated{" "}
           <span
-            title={new Date(updatedAt).toDateString()}
+            title={
+              updatedDate.toLocaleDateString() +
+              " " +
+              updatedDate.toLocaleTimeString()
+            }
             className="font-bold hover:cursor-help"
           >
-            {timeAgo(new Date(updatedAt))}
+            {timeAgo(updatedDate)}
           </span>
         </p>
       </footer>
