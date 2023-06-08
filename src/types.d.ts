@@ -1,7 +1,11 @@
 type Character = {
-  character: string
-  copyright: string
-  fav_count: number
+  char: string
+  copy: string
+  favs: number
   id: number
-  url: string
+}
+
+type Info = {
+  updated: Date
+  count: number
 }
