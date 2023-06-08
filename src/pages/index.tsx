@@ -103,31 +103,31 @@ const Home: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="h-screen bg-gray-900 text-lg font-semibold text-white">
-        <div className="absolute flex w-screen">
-          <div className="mr-3 mt-2 flex-1 flex-col text-end">
-            <p className="text-3xl">{highScore >= 0 ? highScore : "..."}</p>
-            <p className="-mt-1">highscore</p>
+      <main className="flex flex-col md:flex-row min-h-screen bg-gray-900 text-lg font-semibold text-white">
+          <CharacterCard character={chars.length >= 1 && chars[0]} btnPos={"left"} />
+          <CharacterCard character={chars.length >= 1 && chars[1]} check={check} btnPos={"right"} />
+
+          <div className="absolute flex flex-col left-2 h-fit my-auto top-0 bottom-0 justify-center md:right-0 md:items-start md:justify-center md:flex-row md:gap-5 md:top-2 md:w-fit md:mx-auto md:left-0 md:bottom-auto">
+            <div className="flex flex-row md:flex-col items-end gap-2 md:gap-0 md:w-32">
+              <p className="font-bold text-2xl md:text-3xl">{highScore >= 0 ? highScore : "..."}</p>
+              <p className="md:-mt-2">highscore</p>
+            </div>
+
+            <div className="flex flex-row md:flex-col items-end gap-2 md:gap-0 mb-9 md:mb-0 md:items-start md:w-32">
+              <p className="font-bold text-2xl md:text-3xl">{score}</p>
+              <p className="md:-mt-2">score</p>
+            </div>
           </div>
-          <div className="ml-3 mt-2 flex-1 justify-start">
-            <p className="text-3xl">{score}</p>
-            <p className="-mt-1">score</p>
-          </div>
-        </div>
-        {gameOver && (
+      </main>
+      {gameOver && (
           <button
-            className="absolute bottom-0 left-0 right-0 top-0 m-auto h-fit w-56 rounded-sm bg-purple-800 pb-2 pt-1 text-xl font-semibold"
+            className="absolute bottom-0 left-0 right-0 top-0 m-auto h-fit w-40 rounded-sm bg-purple-800 text-white pb-2 pt-1 text-xl font-semibold"
             onClick={() => reset()}
           >
             try again
           </button>
         )}
-        <div className="flex">
-          <CharacterCard character={chars.length >= 1 && chars[0]} btnPos={"left"} />
-          <CharacterCard character={chars.length >= 1 && chars[1]} check={check} btnPos={"right"} />
-        </div>
-      </main>
-      <footer className="absolute bottom-0 left-0 right-0 mx-auto mb-1 w-fit text-center text-sm text-white">
+      <footer className="absolute bottom-0 left-0 right-0 mx-auto mb-1 w-fit text-center text-xs text-white flex flex-col md:text-sm md:flex-row md:gap-2">
         <p>
           <a
             className="font-bold text-orange-400"
@@ -146,8 +146,11 @@ const Home: NextPage = () => {
           >
             soren.rocks
           </a>{" "}
-          | serving <span className="font-bold">{info ? info.count : "..."}</span> characters
-          | updated{" "}
+        </p>
+        <p className="hidden md:block">|</p>
+        <p>serving <span className="font-bold">{info ? info.count : "..."}</span> characters</p>
+        <p className="hidden md:block">|</p>
+        <p>updated{" "}
           <span
             title={
               info ? 
@@ -158,8 +161,7 @@ const Home: NextPage = () => {
             className="font-bold hover:cursor-help"
           >
             {info ? timeAgo(info.updated) : "..."}
-          </span>
-        </p>
+          </span></p>
       </footer>
     </>
   )
