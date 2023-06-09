@@ -8,7 +8,7 @@ import { env } from "../env/client.mjs"
 
 const Home: NextPage = () => {
   const [score, setScore] = useState<number>(0)
-  const [highScore, setHighScore] = useState<number>(-1)
+  const [highScore, setHighScore] = useState<number>(0)
   const [gameOver, setGameOver] = useState<boolean>(false)
   
   const [chars, setChars] = useState<Character[]>([]);
@@ -109,7 +109,7 @@ const Home: NextPage = () => {
 
           <div className="absolute flex flex-col left-2 h-fit my-auto top-0 bottom-0 justify-center md:right-0 md:items-start md:justify-center md:flex-row md:gap-5 md:top-2 md:w-fit md:mx-auto md:left-0 md:bottom-auto">
             <div className="flex flex-row md:flex-col items-end gap-2 md:gap-0 md:w-32">
-              <p className="font-bold text-2xl md:text-3xl">{highScore >= 0 ? highScore : "..."}</p>
+              <p className="font-bold text-2xl md:text-3xl">{highScore}</p>
               <p className="md:-mt-2">highscore</p>
             </div>
 
