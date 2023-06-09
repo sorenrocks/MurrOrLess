@@ -14,7 +14,9 @@ export const serverEnv = {
   NODE_ENV: process.env.NODE_ENV,
 }
 
-export const clientSchema = z.object({})
+export const clientSchema = z.object({
+  NEXT_PUBLIC_API_URL: z.string().url(),
+})
 
 /**
  * You can't destruct `process.env` as a regular object, so you have to do
@@ -22,4 +24,6 @@ export const clientSchema = z.object({})
  * and only used environment variables are included in the build.
  * @type {{ [k in keyof z.input<typeof clientSchema>]: string | undefined }}
  */
-export const clientEnv = {}
+export const clientEnv = {
+  NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+}

@@ -1,75 +1,98 @@
-import type { GetStaticProps } from "next"
-import { type NextPage } from "next"
-import { parse } from "csv-parse"
 import Head from "next/head"
-import { readFileSync } from "fs"
 import CharacterCard from "../components/CharacterCard"
 import { useState, useEffect } from "react"
 import Cookies from "js-cookie"
 import timeAgo from "../utils/timeAgo"
+import { NextPage } from "next"
+import { env } from "../env/client.mjs"
 
-type Props = {
-  characters: Character[]
-  updatedAt: string
-}
-
-const Home: NextPage<Props> = ({ characters: _chars, updatedAt }) => {
-  const [chars, setChars] = useState<Character[]>([])
-
-  const [idx, setIdx] = useState<number>(0)
-  const [a, setA] = useState<Character>()
-  const [b, setB] = useState<Character>()
-  const [tmp, setTmp] = useState<Character>()
-
-  const [highScore, setHighScore] = useState<number>(
-    parseInt(Cookies.get("highscore") || "0"),
-  )
-
-  const [attempt, setAttempt] = useState<number>(1)
-
+const Home: NextPage = () => {
+  const [score, setScore] = useState<number>(0)
+  const [highScore, setHighScore] = useState<number>(-1)
   const [gameOver, setGameOver] = useState<boolean>(false)
+  
+  const [chars, setChars] = useState<Character[]>([]);
 
-  const updatedDate = new Date(updatedAt)
+  const [info, setInfo] = useState<Info | null>(null);
+  const [isLoading, setLoading] = useState(false);
+
+  const fetchChars = async () => {
+    setLoading(true);
+
+    const response = await fetch(env.NEXT_PUBLIC_API_URL + '/chars');
+    const data = await response.json() as Character[];
+
+    setLoading(false);
+
+    setChars((prevChars) => [...prevChars, ...data]);
+  };
+
+  const popChar = (n = 1) => {
+    setChars((prevChars) => {
+      const newList = [...prevChars];
+
+      for (let i = 0; i < n; i++) newList.shift();
+      if (newList.length <= 5) fetchChars().catch(console.error);
+
+      return newList;
+    });
+  };
+
+  // prefetch images for next 2 characters
+  useEffect(() => {
+    // TODO: this fetches the same character twice because of rolling
+    // window etc shouldn't be a problem because it's cached
+    if (chars.length < 4) return;
+ 
+    new Image().src = env.NEXT_PUBLIC_API_URL + `/img/${chars[2].id}`;
+    new Image().src = env.NEXT_PUBLIC_API_URL + `/img/${chars[3].id}`;
+  }, [chars]);
+
+  const fetchInfo = async () => {
+    const response = await fetch(env.NEXT_PUBLIC_API_URL + '/info');
+    const data = await response.json() as {
+      updated: string;
+      count: number;
+    };
+
+    const info = {
+      updated: new Date(data.updated),
+      count: data.count,
+    };
+
+    setInfo(info);
+  };
 
   useEffect(() => {
-    setChars(shuffle(_chars))
-    setIdx(0)
-  }, [_chars, chars, attempt])
-
-  useEffect(() => {
-    setA(chars[idx])
-    setB(chars[idx + 1])
-    setTmp(chars[idx + 2])
-
-    if (highScore < idx)
-      Cookies.set("highscore", idx.toString(), { expires: 365 })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [idx, chars, attempt])
-
-  // prefetch next image
-  useEffect(() => {
-    if (tmp) new Image().src = tmp.url
-  }, [tmp])
+    fetchChars().catch(console.error);
+    fetchInfo().catch(console.error);
+    setHighScore(parseInt(Cookies.get("highscore") || "0"))
+  }, []);
 
   const check = (guess: number) => {
-    if (!a || !b) return null
+    if (chars.length < 2) return
+    const [a, b] = chars
 
-    const actual = b.fav_count - a.fav_count
+    const actual = b.favs - a.favs
     if ((actual > 0 && guess > 0) || (actual < 0 && guess < 0)) {
-      setIdx(idx + 1)
+      setScore(score + 1)
+      popChar()
     } else {
       setGameOver(true)
     }
   }
 
+  useEffect(() => {
+    if (highScore < score) Cookies.set("highscore", score.toString(), { expires: 365 })
+  }, [score])
+
   const reset = () => {
-    if (highScore < idx) setHighScore(idx)
-    setIdx(0)
+    if (highScore < score) setHighScore(score)
+    setScore(0)
     setGameOver(false)
-    setAttempt(attempt + 1)
+    popChar(2)
   }
 
-  if (!a || !b) return null
   return (
     <>
       <Head>
@@ -80,34 +103,34 @@ const Home: NextPage<Props> = ({ characters: _chars, updatedAt }) => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className="h-screen bg-gray-900 text-lg font-semibold text-white">
-        <div className="absolute flex w-screen">
-          <div className="mr-3 mt-2 flex-1 flex-col text-end">
-            <p className="text-3xl">{highScore}</p>
-            <p className="-mt-1">highscore</p>
+      <main className="flex flex-col md:flex-row min-h-screen bg-gray-900 text-lg font-semibold text-white">
+          <CharacterCard character={chars.length >= 1 && chars[0]} btnPos={"left"} />
+          <CharacterCard character={chars.length >= 1 && chars[1]} check={check} btnPos={"right"} />
+
+          <div className="absolute flex flex-col left-2 h-fit my-auto top-0 bottom-0 justify-center md:right-0 md:items-start md:justify-center md:flex-row md:gap-5 md:top-2 md:w-fit md:mx-auto md:left-0 md:bottom-auto">
+            <div className="flex flex-row md:flex-col items-end gap-2 md:gap-0 md:w-32">
+              <p className="font-bold text-2xl md:text-3xl">{highScore >= 0 ? highScore : "..."}</p>
+              <p className="md:-mt-2">highscore</p>
+            </div>
+
+            <div className="flex flex-row md:flex-col items-end gap-2 md:gap-0 mb-9 md:mb-0 md:items-start md:w-32">
+              <p className="font-bold text-2xl md:text-3xl">{score}</p>
+              <p className="md:-mt-2">score</p>
+            </div>
           </div>
-          <div className="ml-3 mt-2 flex-1 justify-start">
-            <p className="text-3xl">{idx}</p>
-            <p className="-mt-1">score</p>
-          </div>
-        </div>
-        {gameOver && (
+      </main>
+      {gameOver && (
           <button
-            className="absolute left-0 right-0 top-0 bottom-0 m-auto h-fit w-56 rounded-sm bg-purple-800 pt-1 pb-2 text-xl font-semibold"
+            className="absolute bottom-0 left-0 right-0 top-0 m-auto h-fit w-40 rounded-sm bg-purple-800 text-white pb-2 pt-1 text-xl font-semibold"
             onClick={() => reset()}
           >
             try again
           </button>
         )}
-        <div className="flex">
-          <CharacterCard character={a} btnPos={"left"} />
-          <CharacterCard character={b} check={check} btnPos={"right"} />
-        </div>
-      </main>
-      <footer className="absolute bottom-0 left-0 right-0 mx-auto mb-1 w-fit text-center text-sm text-white">
+      <footer className="absolute bottom-0 left-0 right-0 mx-auto mb-1 w-fit text-center text-xs text-white flex flex-col md:text-sm md:flex-row md:gap-2">
         <p>
           <a
-            className="font-bold text-orange-600"
+            className="font-bold text-orange-400"
             href="https://github.com/sorenrocks/MurrOrLess"
             target="_blank"
             rel="noreferrer"
@@ -116,66 +139,32 @@ const Home: NextPage<Props> = ({ characters: _chars, updatedAt }) => {
           </a>{" "}
           by{" "}
           <a
-            className="font-bold text-blue-600"
+            className="font-bold text-blue-300"
             href="https://github.com/sorenrocks"
             target="_blank"
             rel="noreferrer"
           >
             soren.rocks
           </a>{" "}
-          | serving <span className="font-bold">{chars.length}</span> characters
-          | updated{" "}
+        </p>
+        <p className="hidden md:block">|</p>
+        <p>serving <span className="font-bold">{info ? info.count : "..."}</span> characters</p>
+        <p className="hidden md:block">|</p>
+        <p>updated{" "}
           <span
             title={
-              updatedDate.toLocaleDateString() +
+              info ? 
+              info.updated.toLocaleDateString() +
               " " +
-              updatedDate.toLocaleTimeString()
+              info.updated.toLocaleTimeString() : "..."
             }
             className="font-bold hover:cursor-help"
           >
-            {timeAgo(updatedDate)}
-          </span>
-        </p>
+            {info ? timeAgo(info.updated) : "..."}
+          </span></p>
       </footer>
     </>
   )
-}
-
-function shuffle<T>(array: T[]): T[] {
-  let currentIndex = array.length,
-    randomIndex
-
-  while (currentIndex != 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex)
-    currentIndex--
-
-    const tmp = array[currentIndex]
-    array[currentIndex] = array[randomIndex]
-    array[randomIndex] = tmp
-  }
-
-  return array
-}
-
-export const getStaticProps: GetStaticProps = async () => {
-  return new Promise((resolve, reject) => {
-    const updatedAtPath = "./data/updated_at.txt"
-    const updatedAt = readFileSync(updatedAtPath, "utf8").trim()
-
-    const charsPath = "./data/characters.csv"
-    const contents = readFileSync(charsPath, "utf8")
-
-    parse(contents, { columns: true }, (err, records) => {
-      if (err) reject(err)
-
-      resolve({
-        props: {
-          characters: records as Character[],
-          updatedAt,
-        },
-      })
-    })
-  })
 }
 
 export default Home
