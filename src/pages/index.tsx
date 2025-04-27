@@ -3,7 +3,7 @@ import CharacterCard from "../components/CharacterCard"
 import { useState, useEffect } from "react"
 import Cookies from "js-cookie"
 import timeAgo from "../utils/timeAgo"
-import { NextPage } from "next"
+import type { NextPage } from "next"
 import { env } from "../env/client.mjs"
 
 const Home: NextPage = () => {
@@ -16,11 +16,9 @@ const Home: NextPage = () => {
   const [chars, setChars] = useState<Character[]>([])
 
   const [info, setInfo] = useState<Info | null>(null)
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(true)
 
   const fetchChars = async () => {
-    setLoading(true)
-
     const response = await fetch(env.NEXT_PUBLIC_API_URL + "/chars")
     const data = (await response.json()) as Character[]
 
@@ -120,9 +118,9 @@ const Home: NextPage = () => {
           <div className="flex w-2/5 flex-col items-center justify-center text-center">
             <p className="mb-8 text-center">
               This game uses images from e621. <br />
-              Despite being tagged as "safe" on there, they are NOT manually
-              curated by me, and some may contain suggestive or innapropriate
-              content.
+              Despite being tagged as &quot;safe&quot; on there, they are NOT
+              manually curated by me, and some may contain suggestive or
+              innapropriate content.
             </p>
             <h1 className="mb-4 text-4xl font-bold">Are you 18 or older?</h1>
             <div className="flex gap-5">
