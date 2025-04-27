@@ -112,11 +112,15 @@ const Home: NextPage = () => {
             name="description"
             content="Guess which character is more popular on e621"
           />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
           <link rel="icon" href="/favicon.ico" />
         </Head>
 
-        <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-lg font-semibold text-white">
-          <div className="flex w-2/5 flex-col items-center justify-center text-center">
+        <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 pb-10 text-lg font-semibold text-white">
+          <div className="flex w-full flex-col items-center justify-center pl-8 pr-8 text-center sm:w-2/3 md:w-1/2">
             <p className="mb-8 text-center">
               This game uses images from e621. <br />
               Despite being tagged as &quot;safe&quot; on there, they are NOT
@@ -124,26 +128,24 @@ const Home: NextPage = () => {
               innapropriate content.
             </p>
             <h1 className="mb-4 text-4xl font-bold">Are you 18 or older?</h1>
-            <div className="flex gap-5">
+            <div className="flex flex-col gap-3 md:flex-row md:gap-5">
               <button
-                className="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-400"
+                className="w-full rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-400 md:w-fit"
                 onClick={() => {
                   window.location.href = "https://soren.rocks"
                 }}
               >
                 No, get me out of here!
               </button>
-              <div className="flex gap-4">
-                <button
-                  className="rounded bg-green-600 px-4 py-2 font-bold text-white hover:bg-green-500"
-                  onClick={() => {
-                    setAgeCheck(true)
-                    Cookies.set("ageCheck", "true", { expires: 365 })
-                  }}
-                >
-                  Yes, let me play!
-                </button>
-              </div>
+              <button
+                className="w-full rounded bg-green-600 px-4 py-2 font-bold text-white hover:bg-green-500 md:w-fit"
+                onClick={() => {
+                  setAgeCheck(true)
+                  Cookies.set("ageCheck", "true", { expires: 365 })
+                }}
+              >
+                Yes, let me play!
+              </button>
             </div>
           </div>
         </main>
@@ -159,6 +161,7 @@ const Home: NextPage = () => {
           name="description"
           content="Guess which character is more popular on e621"
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="flex min-h-screen flex-col bg-gray-900 text-lg font-semibold text-white md:flex-row">
@@ -214,7 +217,7 @@ const Home: NextPage = () => {
         </p>
         <p className="hidden md:block">|</p>
         <p>
-          serving <span className="font-bold">{info ? info.count : "..."}</span>{" "}
+          <span className="font-bold">{info ? info.count : "..."}</span>{" "}
           characters
         </p>
         <p className="hidden md:block">|</p>
