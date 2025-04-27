@@ -13,7 +13,7 @@ const format = (n: number) => {
   return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
 }
 
-const CharacterCard = ({ character: c, check, btnPos }: Props) => {
+const CharacterCard = ({ character: c, check }: Props) => {
   const [active, setActive] = useState<boolean>()
 
   useEffect(() => {

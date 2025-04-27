@@ -85,6 +85,7 @@ const Home: NextPage = () => {
   useEffect(() => {
     if (highScore < score)
       Cookies.set("highscore", score.toString(), { expires: 365 })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [score])
 
   const reset = () => {
