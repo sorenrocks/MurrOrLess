@@ -60,7 +60,7 @@ const Home: NextPage = () => {
     }
 
     const info = {
-      updated: new Date(data.updated),
+      updated: new Date(new Date(data.updated).getTime() + 3 * 60 * 60 * 1000), // utc-3 (this should actually be set in the api)
       count: data.count,
     }
 
