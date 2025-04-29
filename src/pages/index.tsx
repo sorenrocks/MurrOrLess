@@ -17,6 +17,7 @@ const Home: NextPage = () => {
 
   const [info, setInfo] = useState<Info | null>(null)
   const [isLoading, setLoading] = useState(true)
+  const [apiDown, setApiDown] = useState(false)
 
   const fetchChars = async () => {
     const response = await fetch(env.NEXT_PUBLIC_API_URL + "/chars")
@@ -66,6 +67,12 @@ const Home: NextPage = () => {
     fetchInfo().catch(console.error)
     setHighScore(parseInt(Cookies.get("highscore") || "0"))
     setAgeCheck(Cookies.get("ageCheck") === "true" || false)
+
+    // check API down
+    if (chars.length === 0) {
+      setApiDown(true)
+    }
+
     setLoading(false)
   }, [])
 
@@ -103,6 +110,23 @@ const Home: NextPage = () => {
     )
   }
 
+  if (apiDown) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-lg font-semibold text-white">
+        <h1 className="mb-4 text-3xl font-bold">
+          API is down, try again later
+        </h1>
+        <p className="mb-8 text-center">
+          If this issue persists, please let me know at{" "}
+          <a className="text-orange-400 underline" href="https://soren.rocks">
+            soren.rocks
+          </a>
+          !
+        </p>
+      </main>
+    )
+  }
+
   if (!ageCheck) {
     return (
       <>
@@ -120,7 +144,7 @@ const Home: NextPage = () => {
         </Head>
 
         <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 pb-10 text-lg font-semibold text-white">
-          <div className="flex w-full flex-col items-center justify-center pl-8 pr-8 text-center sm:w-2/3 md:w-1/2">
+          <div className="flex w-full flex-col items-center justify-center pl-8 pr-8 text-center sm:w-2/3 md:w-1/3">
             <p className="mb-8 text-center">
               This game uses images from e621. <br />
               Despite being tagged as &quot;safe&quot; on there, they are NOT
