@@ -24,6 +24,7 @@ const Home: NextPage = () => {
     const data = (await response.json()) as Character[]
 
     setChars((prevChars) => [...prevChars, ...data])
+    setLoading(false)
   }
 
   const popChar = (n = 1) => {
@@ -48,7 +49,11 @@ const Home: NextPage = () => {
   }, [chars])
 
   const fetchInfo = async () => {
-    const response = await fetch(env.NEXT_PUBLIC_API_URL + "/info")
+    const response = await fetch(env.NEXT_PUBLIC_API_URL + "/info").catch(() =>
+      setApiDown(true),
+    )
+    if (!response) return setApiDown(true)
+
     const data = (await response.json()) as {
       updated: string
       count: number
@@ -67,13 +72,6 @@ const Home: NextPage = () => {
     fetchInfo().catch(console.error)
     setHighScore(parseInt(Cookies.get("highscore") || "0"))
     setAgeCheck(Cookies.get("ageCheck") === "true" || false)
-
-    // check API down
-    if (chars.length === 0) {
-      setApiDown(true)
-    }
-
-    setLoading(false)
   }, [])
 
   const check = (guess: number) => {
@@ -102,14 +100,6 @@ const Home: NextPage = () => {
     popChar(2)
   }
 
-  if (isLoading) {
-    return (
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-lg font-semibold text-white">
-        <h1 className="mb-4 text-3xl font-bold">Loading...</h1>
-      </main>
-    )
-  }
-
   if (apiDown) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-lg font-semibold text-white">
@@ -123,6 +113,14 @@ const Home: NextPage = () => {
           </a>
           !
         </p>
+      </main>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-gray-900 text-lg font-semibold text-white">
+        <h1 className="mb-4 text-3xl font-bold">Loading...</h1>
       </main>
     )
   }
