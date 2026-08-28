@@ -3,6 +3,8 @@ type Character = {
   copy: string
   favs: number
   id: number
+  md5: string
+  ext: string
 }
 
 type Info = {

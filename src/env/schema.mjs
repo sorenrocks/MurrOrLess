@@ -15,7 +15,7 @@ export const serverEnv = {
 }
 
 export const clientSchema = z.object({
-  NEXT_PUBLIC_API_URL: z.string().url(),
+  // NEXT_PUBLIC_API_URL: z.string().url(),
 })
 
 /**

@@ -9,5 +9,13 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "static1.e621.net",
+      },
+    ],
+  },
 }
 export default config
